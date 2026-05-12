@@ -11,7 +11,8 @@ source:
     sha256: aa2c6f3408169b96e5547c875deb481c91502514c1885fa0acb4b596c8909cb9
 
 build:
-  number: 0
+  number: 1
+  # Windows is blocked until mmcv provides win-64 builds.
   skip: true  # [win or py>=312]
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
@@ -30,7 +31,7 @@ requirements:
     - mmengine >=0.4.0,<1.0.0
     - munkres
     - numpy
-    - opencv
+    - py-opencv
     - pillow
     - python
     - pytorch >=1.8
