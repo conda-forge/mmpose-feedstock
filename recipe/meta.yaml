@@ -11,12 +11,15 @@ source:
     sha256: aa2c6f3408169b96e5547c875deb481c91502514c1885fa0acb4b596c8909cb9
 
 build:
-  number: 1
+  number: 2
   # Windows is blocked until mmcv provides win-64 builds.
-  skip: true  # [win or py>=312]
+  skip: true  # [win or py>=313]
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
+  build:
+    - cross-python_{{ target_platform }}  # [build_platform != target_platform]
+    - python                              # [build_platform != target_platform]
   host:
     - pip
     - python
@@ -41,11 +44,18 @@ requirements:
 
 test:
   imports:
-    - mmpose
+    - mmpose  # [build_platform == target_platform]
+  commands:
+    - python run_test.py  # [build_platform == target_platform]
+  files:
+    - run_test.py  # [build_platform == target_platform]
   requires:
-    - mmcv * cpu_*  # [linux]
-    - pytorch * cpu_*  # [linux]
-    - torchvision * cpu_*  # [linux]
+    - mmcv * cpu_*  # [linux and build_platform == target_platform]
+    - pytorch * cpu_*  # [linux and build_platform == target_platform]
+    - torchvision * cpu_*  # [linux and build_platform == target_platform]
+
+# osx-arm64 is cross-built on osx-64 CI workers, where creating the test
+# environment would execute target-arm64 Python and native post-link tools.
 
 about:
   home: https://github.com/open-mmlab/mmpose
