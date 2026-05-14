@@ -42,6 +42,7 @@ requirements:
     - torchvision
     - xtcocotools >=1.12
 
+{% if target_platform != "osx-arm64" %}
 test:
   imports:
     - mmpose
@@ -53,6 +54,10 @@ test:
     - mmcv * cpu_*  # [linux]
     - pytorch * cpu_*  # [linux]
     - torchvision * cpu_*  # [linux]
+{% else %}
+# osx-arm64 is cross-built on osx-64 CI workers, where the target Python and
+# native post-link tools in the test environment cannot be executed.
+{% endif %}
 
 about:
   home: https://github.com/open-mmlab/mmpose
