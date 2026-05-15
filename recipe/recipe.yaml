@@ -1,0 +1,79 @@
+schema_version: 1
+
+context:
+  version: "1.3.2"
+
+package:
+  name: mmpose
+  version: ${{ version }}
+
+source:
+  - url: https://pypi.org/packages/source/m/mmpose/mmpose-${{ version }}.tar.gz
+    sha256: 463df5a591b6cb351140f52a1a6a5e74d9182392d09b8e6bab1f471daca5a21f
+  - url: https://raw.githubusercontent.com/open-mmlab/mmpose/v${{ version }}/LICENSE
+    sha256: aa2c6f3408169b96e5547c875deb481c91502514c1885fa0acb4b596c8909cb9
+
+build:
+  number: 3
+  skip:
+    # Windows is blocked until mmcv provides win-64 builds.
+    - win
+    # mmcv does not publish Python 3.13 builds yet.
+    - match(python, ">=3.13")
+  script: python -m pip install . -vv --no-deps --no-build-isolation
+
+requirements:
+  build:
+    - if: build_platform != target_platform
+      then:
+        - cross-python_${{ target_platform }}
+        - python
+  host:
+    - pip
+    - python
+    - setuptools
+  run:
+    - chumpy
+    - json_tricks
+    - matplotlib-base
+    - mmcv >=2.0.0,<3.0.0
+    - mmengine >=0.4.0,<1.0.0
+    - munkres
+    - numpy
+    - py-opencv
+    - pillow
+    - python
+    - pytorch >=1.8
+    - scipy
+    - torchvision
+    - xtcocotools >=1.12
+
+tests:
+  - script:
+      - python -c "import mmpose"
+      - pip check
+      - python run_test.py
+    files:
+      recipe:
+        - run_test.py
+    requirements:
+      run:
+        - pip
+        - if: linux
+          then: mmcv * cpu_*
+        - if: linux
+          then: pytorch * cpu_*
+        - if: linux
+          then: torchvision * cpu_*
+
+about:
+  homepage: https://github.com/open-mmlab/mmpose
+  repository: https://github.com/open-mmlab/mmpose
+  documentation: https://mmpose.readthedocs.io/
+  summary: OpenMMLab Pose Estimation Toolbox and Benchmark
+  license: Apache-2.0
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - jeongseok-meta
