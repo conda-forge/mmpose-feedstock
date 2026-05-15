@@ -49,16 +49,16 @@ requirements:
     - xtcocotools >=1.12
 
 tests:
-  - python:
-      imports:
-        - mmpose
   - script:
+      - python -c "import mmpose"
+      - pip check
       - python run_test.py
     files:
       recipe:
         - run_test.py
     requirements:
       run:
+        - pip
         - if: linux
           then: mmcv * cpu_*
         - if: linux
