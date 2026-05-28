@@ -2,6 +2,7 @@ schema_version: 1
 
 context:
   version: "1.3.2"
+  python_min: "3.10"
 
 package:
   name: mmpose
@@ -14,23 +15,14 @@ source:
     sha256: aa2c6f3408169b96e5547c875deb481c91502514c1885fa0acb4b596c8909cb9
 
 build:
-  number: 3
-  skip:
-    # Windows is blocked until mmcv provides win-64 builds.
-    - win
-    # mmcv does not publish Python 3.13 builds yet.
-    - match(python, ">=3.13")
+  noarch: python
+  number: 4
   script: python -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
-  build:
-    - if: build_platform != target_platform
-      then:
-        - cross-python_${{ target_platform }}
-        - python
   host:
     - pip
-    - python
+    - python ${{ python_min }}.*
     - setuptools
   run:
     - chumpy
@@ -42,7 +34,7 @@ requirements:
     - numpy
     - py-opencv
     - pillow
-    - python
+    - python >=${{ python_min }}
     - pytorch >=1.8
     - scipy
     - torchvision
@@ -59,6 +51,7 @@ tests:
     requirements:
       run:
         - pip
+        - python ${{ python_min }}.*
         - if: linux
           then: mmcv * cpu_*
         - if: linux
